@@ -1,0 +1,458 @@
+<title>ISRO CS 2026 — Prep Dashboard</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#161a1f; --muted:#5b6470; --line:#e4e7ec;
+    --brand:#0b5cad; --brand2:#0a7d5a; --accent:#c2410c; --hi:#fff7ed; --hiline:#fdba74;
+    --chip:#eef2f7; --ok:#0a7d5a; --track:#e9edf2;
+    --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.1);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#0f1215;--card:#171b20;--ink:#e7ebf0;--muted:#9aa4b2;--line:#262c33;
+    --brand:#5aa9f0;--brand2:#4fd0a0;--accent:#fb923c;--hi:#2a1c10;--hiline:#7c4a1e;--chip:#1f252c;
+    --ok:#4fd0a0;--track:#232a31;--shadow:0 1px 2px rgba(0,0,0,.4);}
+  }
+  :root[data-theme="dark"]{--bg:#0f1215;--card:#171b20;--ink:#e7ebf0;--muted:#9aa4b2;--line:#262c33;
+    --brand:#5aa9f0;--brand2:#4fd0a0;--accent:#fb923c;--hi:#2a1c10;--hiline:#7c4a1e;--chip:#1f252c;--ok:#4fd0a0;--track:#232a31;}
+  :root[data-theme="light"]{--bg:#f5f7fa;--card:#fff;--ink:#161a1f;--muted:#5b6470;--line:#e4e7ec;
+    --brand:#0b5cad;--brand2:#0a7d5a;--accent:#c2410c;--hi:#fff7ed;--hiline:#fdba74;--chip:#eef2f7;--ok:#0a7d5a;--track:#e9edf2;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1060px;margin:0 auto;padding:24px 18px 90px;}
+  header.hero{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;
+    border-radius:16px;padding:24px 26px;box-shadow:var(--shadow);}
+  header.hero h1{margin:0 0 6px;font-size:25px;letter-spacing:-.2px;}
+  header.hero .sub{opacity:.95;font-size:14.5px}
+  header.hero .meta{margin-top:12px;display:flex;flex-wrap:wrap;gap:7px}
+  .pill{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);
+    padding:3px 11px;border-radius:999px;font-size:12.5px;font-weight:600}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .toc a{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);color:#fff;
+    padding:5px 11px;border-radius:8px;font-size:13px;text-decoration:none;font-weight:600}
+  .toc a:hover{background:rgba(255,255,255,.26)}
+
+  h2{font-size:19px;margin:32px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line);
+    display:flex;align-items:center;gap:9px;scroll-margin-top:14px}
+  h2 .n{background:var(--brand);color:#fff;width:25px;height:25px;border-radius:7px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 17px;box-shadow:var(--shadow);margin:12px 0}
+  a{color:var(--brand);text-decoration:none;font-weight:600}
+  a:hover{text-decoration:underline}
+  .sub-notes{font-size:13.5px;color:var(--muted)}
+  ul.tight{margin:6px 0 0;padding-left:20px}
+  ul.tight li{margin:4px 0}
+  code{background:var(--chip);padding:1px 6px;border-radius:5px;font-size:13px}
+
+  /* dashboard */
+  .dash{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;margin-top:14px}
+  @media(max-width:720px){.dash{grid-template-columns:1fr}}
+  .ring-card{display:flex;gap:18px;align-items:center}
+  .ring{--p:0;width:120px;height:120px;border-radius:50%;flex:0 0 auto;
+    background:conic-gradient(var(--brand) calc(var(--p)*1%),var(--track) 0);
+    display:flex;align-items:center;justify-content:center;position:relative}
+  .ring::before{content:"";position:absolute;inset:12px;border-radius:50%;background:var(--card)}
+  .ring b{position:relative;font-size:26px;font-weight:800}
+  .ring small{position:relative;display:block;text-align:center;font-size:11px;color:var(--muted);margin-top:26px;position:absolute}
+  .ring .lbl{position:relative;text-align:center;line-height:1.1}
+  .ring .lbl b{display:block}.ring .lbl small{position:static;display:block;font-size:11px;color:var(--muted)}
+  .bars{display:flex;flex-direction:column;gap:11px;justify-content:center}
+  .bar .top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px}
+  .bar .top b{font-weight:700}
+  .track{height:9px;background:var(--track);border-radius:6px;overflow:hidden}
+  .fill{height:100%;background:var(--brand);border-radius:6px;transition:width .3s}
+  .fill.g{background:var(--ok)} .fill.o{background:var(--accent)}
+  .kpis{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 13px;flex:1;min-width:120px}
+  .kpi .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .kpi .v{font-size:17px;font-weight:800;margin-top:1px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  button.btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+    background:var(--card);color:var(--ink);padding:7px 13px;border-radius:8px}
+  button.btn:hover{border-color:var(--brand);color:var(--brand)}
+  button.btn.danger:hover{border-color:#dc2626;color:#dc2626}
+
+  /* subject checklists */
+  details.subj{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:10px 0;box-shadow:var(--shadow);overflow:hidden}
+  details.subj>summary{list-style:none;cursor:pointer;padding:13px 16px;display:flex;align-items:center;gap:12px}
+  details.subj>summary::-webkit-details-marker{display:none}
+  .caret{transition:transform .2s;color:var(--muted);flex:0 0 auto}
+  details[open] .caret{transform:rotate(90deg)}
+  .s-title{font-weight:700;flex:1;min-width:0}
+  .s-title .q{color:var(--accent);font-weight:700;font-size:13px;margin-left:6px}
+  .s-prog{display:flex;align-items:center;gap:9px;flex:0 0 auto;width:170px}
+  @media(max-width:560px){.s-prog{width:96px}.s-prog .pct{display:none}}
+  .s-prog .track{flex:1}
+  .s-prog .pct{font-size:12.5px;font-weight:700;width:38px;text-align:right;color:var(--muted)}
+  .s-body{padding:4px 16px 14px;border-top:1px solid var(--line)}
+  .s-links{margin:10px 0 8px;font-size:13px}
+  .s-links a{margin-right:14px;white-space:nowrap}
+  .chk{display:flex;align-items:flex-start;gap:9px;padding:5px 0;font-size:14.5px}
+  .chk input{margin-top:4px;width:16px;height:16px;flex:0 0 auto;accent-color:var(--brand);cursor:pointer}
+  .chk label{cursor:pointer}
+  .chk.done label{color:var(--muted);text-decoration:line-through}
+  .cols{columns:2;column-gap:26px}
+  @media(max-width:640px){.cols{columns:1}}
+  .cols .chk{break-inside:avoid}
+
+  /* tables */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;min-width:600px;background:var(--card)}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:14px}
+  th{background:var(--chip);font-size:12px;text-transform:uppercase;letter-spacing:.3px;color:var(--muted)}
+  tr:last-child td{border-bottom:none}
+  td.q{font-weight:700;color:var(--accent);text-align:center;white-space:nowrap}
+  td.yr{font-weight:700;white-space:nowrap}
+  .now{background:var(--hi)}
+  .badge{display:inline-block;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:middle}
+  .lnks a{margin-right:11px;white-space:nowrap}
+  .pyq-chk{display:inline-flex;align-items:center;gap:5px;margin-right:14px;font-size:13px;white-space:nowrap}
+  .pyq-chk input{width:15px;height:15px;accent-color:var(--brand);cursor:pointer}
+  .callout{border-left:4px solid var(--brand);background:var(--chip);border-radius:8px;padding:11px 15px;margin:12px 0;font-size:14px}
+  .foot{margin-top:40px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(30px);opacity:0;
+    background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:9px;font-size:13.5px;font-weight:600;
+    transition:.25s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>ISRO Scientist/Engineer &lsquo;SC&rsquo; — Computer Science · Prep Dashboard</h1>
+    <div class="sub">Post <b>BE003</b> · Advt <b>ISRO:ICRB:02(EMC-CEPO):2026</b> · ICRB written-test route · <span id="today"></span></div>
+    <div class="meta">
+      <span class="pill">13 + 3 PwBD seats</span>
+      <span class="pill">Part A ≈ 80 tech MCQs</span>
+      <span class="pill">Part B ≈ 15 aptitude</span>
+      <span class="pill">+3 / −1 (Part A)</span>
+      <span class="pill">Written → Interview</span>
+    </div>
+    <div class="toc">
+      <a href="#dash">Dashboard</a>
+      <a href="#plan">Syllabus &amp; checklist</a>
+      <a href="#calendar">Calendar</a>
+      <a href="#pyq">PYQs</a>
+      <a href="#aptitude">Part B</a>
+      <a href="#revision">Revision &amp; mocks</a>
+      <a href="#strategy">Strategy</a>
+    </div>
+  </header>
+
+  <!-- ============ DASHBOARD ============ -->
+  <h2 id="dash"><span class="n">1</span>Live readiness dashboard</h2>
+  <div class="dash">
+    <div class="card ring-card">
+      <div class="ring" id="ring"><div class="lbl"><b id="ringpct">0%</b><small>exam-ready</small></div></div>
+      <div>
+        <div style="font-weight:700;margin-bottom:4px">Overall readiness</div>
+        <div class="sub-notes">Weighted: 50% learning · 30% PYQs · 20% revision. Tick items below and this updates live and saves automatically in this browser.</div>
+      </div>
+    </div>
+    <div class="card bars">
+      <div class="bar"><div class="top"><span>📘 Syllabus learning</span><b id="t-learn">0%</b></div><div class="track"><div class="fill" id="f-learn" style="width:0"></div></div></div>
+      <div class="bar"><div class="top"><span>📄 PYQ papers</span><b id="t-pyq">0%</b></div><div class="track"><div class="fill o" id="f-pyq" style="width:0"></div></div></div>
+      <div class="bar"><div class="top"><span>🔁 Revision &amp; mocks</span><b id="t-rev">0%</b></div><div class="track"><div class="fill g" id="f-rev" style="width:0"></div></div></div>
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="k">Topics done</div><div class="v" id="k-topics">0 / 0</div></div>
+    <div class="kpi"><div class="k">Papers reviewed</div><div class="v" id="k-papers">0 / 12</div></div>
+    <div class="kpi"><div class="k">Subjects mastered</div><div class="v" id="k-subj">0 / 10</div></div>
+    <div class="kpi"><div class="k">Weighted Q's covered</div><div class="v" id="k-qcov">0 / 95</div></div>
+  </div>
+  <div class="controls">
+    <button class="btn" id="btn-export">⬇ Export progress (backup)</button>
+    <button class="btn" id="btn-import">⬆ Import progress</button>
+    <button class="btn" id="btn-collapse">Collapse all</button>
+    <button class="btn danger" id="btn-reset">↺ Reset all</button>
+    <input type="file" id="file-import" accept="application/json" style="display:none">
+  </div>
+  <div class="callout" style="margin-top:14px">
+    <b>How to use:</b> work top-to-bottom through each subject's checklist (linked to notes), tick topics as you finish, then solve the year's PYQs and mark them <i>Attempted</i> → <i>Reviewed</i>. Aim for <b>100% learning + all 12 papers reviewed twice + 3 mocks</b> before the exam. Your ticks are saved locally — click <b>Export</b> weekly to keep a backup file.
+  </div>
+
+  <!-- ============ SYLLABUS + CHECKLIST ============ -->
+  <h2 id="plan"><span class="n">2</span>Syllabus &amp; topic checklist</h2>
+  <p class="sub-notes">Every subject below is the full ISRO-CS syllabus broken into tick-able micro-topics, ordered by weightage (expected questions shown). Links: <b>Learn</b> = notes · <b>Solve</b> = practice.</p>
+  <div id="subjects"></div>
+
+  <!-- ============ CALENDAR ============ -->
+  <h2 id="calendar"><span class="n">3</span>92-day study calendar (Part A)</h2>
+  <p class="sub-notes">From the ISRO CS 2026 academic calendar in this folder. Today (8 Sep 2026) you are in the <b>Computer Networks</b> phase.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Subject</th><th>Q's</th><th>Start</th><th>End</th><th>Days</th></tr></thead>
+      <tbody>
+        <tr class="now"><td class="yr">Computer Networks &amp; Cybersecurity <span class="badge">NOW</span></td><td class="q">≈12</td><td>Aug 31</td><td>Sep 13</td><td>14</td></tr>
+        <tr><td class="yr">Programming, Data Structures &amp; Algorithms</td><td class="q">≈11</td><td>Sep 14</td><td>Sep 26</td><td>13</td></tr>
+        <tr><td class="yr">Digital Logic &amp; Computer Organization</td><td class="q">≈9</td><td>Sep 27</td><td>Oct 06</td><td>10</td></tr>
+        <tr><td class="yr">Theory of Computation &amp; Compiler Design</td><td class="q">≈9</td><td>Oct 07</td><td>Oct 16</td><td>10</td></tr>
+        <tr><td class="yr">Engineering &amp; Discrete Mathematics</td><td class="q">≈8</td><td>Oct 17</td><td>Oct 25</td><td>9</td></tr>
+        <tr><td class="yr">Operating Systems</td><td class="q">≈7</td><td>Oct 26</td><td>Nov 02</td><td>8</td></tr>
+        <tr><td class="yr">Software Engineering, OOP &amp; Web</td><td class="q">≈7</td><td>Nov 03</td><td>Nov 10</td><td>8</td></tr>
+        <tr><td class="yr">Database Management Systems</td><td class="q">≈6</td><td>Nov 11</td><td>Nov 17</td><td>7</td></tr>
+        <tr><td class="yr">AI, Machine Learning, Big Data &amp; Cloud</td><td class="q">≈10</td><td>Nov 18</td><td>Nov 29</td><td>12</td></tr>
+        <tr><td class="yr">Other Recurring CS Topics</td><td class="q">≈1</td><td>Nov 30</td><td>Nov 30</td><td>1</td></tr>
+        <tr style="font-weight:700"><td>Total Part A</td><td class="q">≈80</td><td>Aug 31</td><td>Nov 30</td><td>92</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============ PYQ ============ -->
+  <h2 id="pyq"><span class="n">4</span>Previous-year papers &mdash; tracker</h2>
+  <p class="sub-notes">Papers open from their public sources (Google Drive / GATE Overflow). Tick <b>Attempted</b> after a timed solve, <b>Reviewed</b> after you study the solution &amp; log your mistakes. <b>PYQs are the highest-yield resource</b> — many questions repeat.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Year</th><th>Track</th><th>Paper (offline)</th><th>Solutions / quiz</th></tr></thead>
+      <tbody id="pyq-body"></tbody>
+    </table>
+  </div>
+  <div class="card">
+    <b>More banks:</b>
+    <span class="lnks">
+      <a href="https://gateoverflow.in/exams/isro">GATE Overflow — all ISRO exams</a>
+      <a href="https://www.geeksforgeeks.org/gate/isro-cs-preparation/">GfG — ISRO CS hub</a>
+      <a href="https://practicepaper.in/gate-cse/isro-previous-year-question-papers-sc-engineer-computer-science">PracticePaper</a>
+      <a href="https://testbook.com/isro-scientist-cs/previous-year-papers">Testbook</a>
+    </span>
+  </div>
+
+  <!-- ============ APTITUDE ============ -->
+  <h2 id="aptitude"><span class="n">5</span>Part B &mdash; General Aptitude &amp; Reasoning</h2>
+  <p class="sub-notes">≈15 questions, usually no negative marking — a scoring section. Practice a little daily. Tick sub-areas as you get comfortable.</p>
+  <details class="subj" id="apt-details">
+    <summary>
+      <span class="caret">▶</span>
+      <span class="s-title">General Aptitude &amp; Reasoning <span class="q">≈15 Q</span></span>
+      <span class="s-prog"><span class="track"><span class="fill" id="fill-apt" style="width:0"></span></span><span class="pct" id="pct-apt">0%</span></span>
+    </summary>
+    <div class="s-body">
+      <div class="s-links">
+        <a href="https://www.geeksforgeeks.org/aptitude-questions-and-answers/">Quant (GfG)</a>
+        <a href="https://www.indiabix.com/aptitude/questions-and-answers/">Quant (IndiaBix)</a>
+        <a href="https://www.indiabix.com/logical-reasoning/questions-and-answers/">Reasoning</a>
+        <a href="https://www.indiabix.com/verbal-ability/questions-and-answers/">Verbal</a>
+        <a href="https://www.indiabix.com/data-interpretation/questions-and-answers/">Data Interpretation</a>
+        <a href="https://www.indiabix.com/online-test/aptitude-test/">Timed tests</a>
+      </div>
+      <div class="cols" id="apt-list"></div>
+    </div>
+  </details>
+
+  <!-- ============ REVISION + MOCKS ============ -->
+  <h2 id="revision"><span class="n">6</span>Revision &amp; mock tests</h2>
+  <p class="sub-notes">The last mile. Two full revision passes + timed mocks turn "learned" into "exam-ready".</p>
+  <details class="subj" id="rev-details" open>
+    <summary>
+      <span class="caret">▶</span>
+      <span class="s-title">Revision passes &amp; mocks</span>
+      <span class="s-prog"><span class="track"><span class="fill g" id="fill-rev" style="width:0"></span></span><span class="pct" id="pct-rev">0%</span></span>
+    </summary>
+    <div class="s-body">
+      <div class="s-links">
+        <a href="https://www.geeksforgeeks.org/gate/gate-cs-notes-gq/">GATE CS Notes (fast revision)</a>
+        <a href="https://gatecse.in/">gatecse.in one-pagers</a>
+      </div>
+      <div class="cols" id="rev-list"></div>
+    </div>
+  </details>
+
+  <!-- ============ STRATEGY ============ -->
+  <h2 id="strategy"><span class="n">7</span>Strategy — the plan in 6 lines</h2>
+  <div class="card">
+    <ul class="tight">
+      <li><b>PYQs are king.</b> Solve all 12 papers twice; ISRO recycles questions heavily. Keep an error log and re-test weak spots.</li>
+      <li><b>Follow weightage.</b> Top 5 subjects ≈ 51 of ~80 marks — finish those to a high level first.</li>
+      <li><b>1 min/question.</b> Practice timed. With −1/3 marking, guess only after eliminating 2+ options.</li>
+      <li><b>Don't skip applied topics</b> (Cybersecurity, AI/ML, Big Data, Cloud, Web, Graphics) — ~18+ marks beyond standard GATE CSE.</li>
+      <li><b>Part B is free marks</b> — 15 min/day of aptitude keeps it sharp; usually no negative marking.</li>
+      <li><b>Last 2 weeks = revision + mocks only.</b> Re-attempt GfG quizzes timed; review the error log daily.</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    <b>Sources:</b> Pattern/syllabus cross-checked from
+    <a href="https://www.geeksforgeeks.org/blogs/isro-sc-engineer-recruitment-for-cs-students-eligibility-exam-pattern-syllabus/">GeeksforGeeks</a>,
+    <a href="https://www.goclasses.in/blog/strategic-guide-to-ace-the-isro-cs-scientist-exam">GO Classes</a>,
+    <a href="https://www.careerpower.in/isro-scientist-syllabus.html">Careerpower</a>,
+    <a href="https://www.madeeasyprime.com/exams/isro">MadeEasy</a>. PYQ PDFs via
+    <a href="https://gatecse.in/isro-question-papers-for-cse/">gatecse.in</a> &amp;
+    <a href="https://gateoverflow.in/exams/isro">GATE Overflow</a>.
+    Weightage &amp; calendar are from the strategy-sheet screenshots in this folder (unofficial community estimate).
+    ISRO publishes no official CS syllabus — treat as GATE-CSE-equivalent + applied topics.
+    Confirm dates/pattern/marking against the official notification &amp; call-letter on
+    <a href="https://www.isro.gov.in/">isro.gov.in</a>. Progress is stored in your browser's local storage; use Export for a backup. Built 8 Sep 2026.
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY="isro_cs_progress_v1";
+  var state={};
+  try{ state=JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ state={}; }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+  function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(function(){t.classList.remove('show');},1800); }
+
+  document.getElementById('today').textContent="Today: 8 Sep 2026";
+
+  // ---- data ----
+  var SUBJECTS=[
+    {id:"cn",q:12,name:"Computer Networks & Cybersecurity",now:true,
+     learn:[["Networks notes","https://www.geeksforgeeks.org/computer-network-tutorials/"]],
+     topics:["OSI & TCP/IP reference models","Framing, CRC & error control","Ethernet, CSMA/CD & WLAN","IPv4 addressing, subnetting & CIDR","Routing — distance-vector & link-state","ARP, DHCP, ICMP & NAT","TCP & UDP, sliding window","Flow & congestion control","DNS, HTTP, SMTP & sockets","Symmetric crypto & AES","RSA, hashing, digital signatures & PKI","Authentication, firewalls & network attacks"]},
+    {id:"ds",q:11,name:"Programming, Data Structures & Algorithms",
+     learn:[["DSA tutorial","https://www.geeksforgeeks.org/dsa/dsa-tutorial-learn-data-structures-and-algorithms/"]],
+     topics:["C/C++ — pointers, arrays, strings","Functions & recursion","Stacks, queues & linked lists","Trees & BST","AVL / B / B+ trees","Heaps & hashing","Graph representation & traversal (BFS/DFS)","Complexity & recurrences (Master theorem)","Searching & sorting","Divide & conquer","Greedy algorithms","Dynamic programming","Shortest paths (Dijkstra/Bellman-Ford/Floyd)","MST (Prim/Kruskal) & Huffman coding"]},
+    {id:"ai",q:10,name:"AI, Machine Learning, Big Data & Cloud",
+     learn:[["AI","https://www.geeksforgeeks.org/artificial-intelligence/"],["ML","https://www.geeksforgeeks.org/machine-learning/"],["Hadoop","https://www.geeksforgeeks.org/hadoop-tutorial/"],["Cloud","https://www.geeksforgeeks.org/cloud-computing/"]],
+     topics:["Intelligent agents & AI search (A*, heuristics)","Knowledge representation & logic","Bayesian networks","Decision trees","Classification & regression","Clustering & K-means","Reinforcement learning basics","Neural-network fundamentals","Hadoop, HDFS & MapReduce","NoSQL & stream processing","Cloud models (IaaS/PaaS/SaaS) & elasticity","Virtualisation & hypervisors"]},
+    {id:"dl",q:9,name:"Digital Logic & Computer Organization",
+     learn:[["Digital Logic","https://www.geeksforgeeks.org/digital-electronics-logic-design-tutorials/"],["COA","https://www.geeksforgeeks.org/computer-organization-and-architecture-tutorials/"]],
+     topics:["Number systems & complements","Floating-point representation","Boolean algebra & K-maps","Gates, MUX, decoders & adders","Flip-flops, registers & counters","Instruction formats & addressing modes","ALU & control unit; microprogramming","Pipelining & hazards","Cache & memory hierarchy","TLB & virtual memory","I/O, interrupts & DMA"]},
+    {id:"toc",q:9,name:"Theory of Computation & Compiler Design",
+     learn:[["TOC","https://www.geeksforgeeks.org/theory-of-computation-automata-tutorials/"],["Compiler","https://www.geeksforgeeks.org/compiler-design-tutorials/"]],
+     topics:["Regular expressions, DFA & NFA","Closure properties & pumping lemma","CFG, ambiguity & normal forms","PDA","Turing machines","Recursive & RE languages; decidability","Complexity classes (P, NP)","Lexical analysis","LL parsing","LR parsing & YACC","Syntax-directed translation","Intermediate code & optimisation"]},
+    {id:"em",q:8,name:"Engineering & Discrete Mathematics",
+     learn:[["Engg Maths","https://www.geeksforgeeks.org/engineering-mathematics-tutorials/"],["Discrete","https://www.geeksforgeeks.org/discrete-mathematics-tutorial/"]],
+     topics:["Propositional & predicate logic","Sets, relations & functions","Partial orders & lattices","Groups & algebraic structures","Graph theory (connectivity, planarity, colouring)","Combinatorics & counting","Recurrence relations","Probability","Matrices & determinants","Eigenvalues & eigenvectors","Calculus (limits, differentiation, integration)","Numerical methods & optimisation"]},
+    {id:"os",q:7,name:"Operating Systems",
+     learn:[["OS notes","https://www.geeksforgeeks.org/operating-systems/"]],
+     topics:["System calls, processes & threads","Process states & CPU scheduling","Inter-process communication (IPC)","Synchronisation & race conditions","Semaphores & monitors","Deadlocks","Paging & segmentation","TLB & virtual memory","Page replacement algorithms","File systems","Disk scheduling","Unix/Linux basics & process creation"]},
+    {id:"se",q:7,name:"Software Engineering, OOP & Web",
+     learn:[["Software Engg","https://www.geeksforgeeks.org/software-engineering/"],["Web (HTML/JS)","https://www.geeksforgeeks.org/html/"]],
+     topics:["SDLC models","Requirements & design","Cohesion, coupling & UML","Metrics — FP, COCOMO, cyclomatic complexity","Testing levels & types (alpha/beta/regression/MCDC)","Reliability, maintenance & CMM","OOP concepts","Java & JVM, exception handling","HTML, XML & XPath","JavaScript basics"]},
+    {id:"db",q:6,name:"Database Management Systems",
+     learn:[["DBMS notes","https://www.geeksforgeeks.org/dbms/"]],
+     topics:["ER & relational models","Keys & integrity constraints","Relational algebra & calculus","SQL — joins & nested queries","Functional dependencies & normalisation","Indexing, hashing & B/B+ trees","Transactions & ACID","Serializability & concurrency control","Recovery & timestamp protocols","Distributed & NoSQL databases"]},
+    {id:"other",q:1,name:"Other Recurring CS Topics",
+     learn:[["CS articles","https://www.geeksforgeeks.org/gate/gate-cs-notes-gq/"]],
+     topics:["Computer graphics & 2D/3D transformations","Image/audio/video representation & multimedia compression","RAID & storage systems","Distributed & parallel computing; performance evaluation"]}
+  ];
+  var APT=["Number system, HCF/LCM, percentages","Ratio, proportion, averages, ages","Profit-loss, SI/CI","Time-speed-distance, time-work","Permutations, combinations & probability","Series, sequences & simplification","Coding-decoding & blood relations","Syllogisms & logical deduction","Direction sense & seating arrangement","Data interpretation (tables/charts)","Verbal — synonyms, antonyms, sentence correction","Reading comprehension"];
+  var REV=["Revision Pass 1 — all subjects","Revision Pass 2 — weak subjects","Error-log review (all wrong PYQ questions)","Formula/short-notes sheet made","Mock test 1 (full, timed)","Mock test 2 (full, timed)","Mock test 3 (full, timed)","Re-attempt all GfG PYQ quizzes timed"];
+  var PYQ=[
+    {y:"2020",pdf:"https://drive.google.com/file/d/1Uxv_blBTVVxCUN3d2qvuujMP7LeUtuhV/view",key:"https://drive.google.com/file/d/1MR60VwgH7JU32fXBsyUiWFmCr0f4Fe8b/view",go:"https://gateoverflow.in/exam/323/isro-2020",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2020/"},
+    {y:"2018",pdf:"https://drive.google.com/file/d/1W4Hx3-O9NVyDccT4C7InBai31w_t7PtU/view",go:"https://gateoverflow.in/exam/176/isro-2018",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2018/"},
+    {y:"2017 Dec",pdf:"https://drive.google.com/file/d/15GMPikq36hG1xKtOBIW_OpYOomccRpWD/view",go:"https://gateoverflow.in/exam/89/isro-2017-ii",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2017/"},
+    {y:"2017 May",pdf:"https://drive.google.com/file/d/1SGE-ipQPJTmw6RB88zlGEZy427C3dT4z/view",go:"https://gateoverflow.in/exam/78/isro-2017",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2017-may/"},
+    {y:"2016",pdf:"https://drive.google.com/file/d/1PCDKxV1sGWk-QLRtETIwCtCGP1Wu1KLY/view",go:"https://gateoverflow.in/exam/24/isro-2016",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2016/"},
+    {y:"2015",pdf:"https://drive.google.com/file/d/1fJagAuHAeZISGPVGQ-VSoAAg2dvLBfKs/view",go:"https://gateoverflow.in/exam/22/isro-2015",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2015/"},
+    {y:"2014",pdf:"https://drive.google.com/file/d/1TMDg6U8-TQixfH6B3jvjeKc1R277pnT9/view",go:"https://gateoverflow.in/exam/23/isro-2014",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2014/"},
+    {y:"2013",pdf:"https://drive.google.com/file/d/1UWORpbY1aI9hERU3liNRi9sVQLS4uVtL/view",go:"https://gateoverflow.in/exam/21/isro-2013",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2013/"},
+    {y:"2011",pdf:"https://drive.google.com/file/d/1ETBFN90GVWtdLoyThM4xZg7ZhY3vkW-8/view",go:"https://gateoverflow.in/exam/20/isro-2011",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2011/"},
+    {y:"2009",pdf:"https://drive.google.com/file/d/1hXkckZnigeQ8UHvX9Je5u7DfeJ4gJqo6/view",go:"https://gateoverflow.in/exam/19/isro-2009",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2010/"},
+    {y:"2008",pdf:"https://drive.google.com/file/d/1DHmQ10gEoVWx3Is-wNzovCl0Ou7l64cI/view",go:"https://gateoverflow.in/exam/16/isro-2008",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2008/"},
+    {y:"2007",pdf:"https://drive.google.com/file/d/12KMqbrnh78p0pqgVYvHc1UsArtll_vGM/view",go:"https://gateoverflow.in/exam/17/isro-2007",gfg:"https://www.geeksforgeeks.org/quizzes/isro-cs-2007/"}
+  ];
+
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function on(id){return !!state[id];}
+
+  // ---- render subjects ----
+  var host=document.getElementById('subjects');
+  SUBJECTS.forEach(function(s){
+    var d=document.createElement('details'); d.className='subj'; if(s.now) d.open=true;
+    var links=s.learn.map(function(l){return '<a href="'+l[1]+'">'+esc(l[0])+'</a>';}).join('');
+    var solve='<a href="https://www.geeksforgeeks.org/gate/isro-cs-preparation/">Solve PYQ Qs</a>';
+    var items=s.topics.map(function(t,i){var id=s.id+'-'+i;return '<div class="chk'+(on(id)?' done':'')+'"><input type="checkbox" data-id="'+id+'" data-group="subj" '+(on(id)?'checked':'')+'><label>'+esc(t)+'</label></div>';}).join('');
+    d.innerHTML='<summary><span class="caret">▶</span><span class="s-title">'+esc(s.name)+'<span class="q">≈'+s.q+' Q</span>'+(s.now?' <span class="badge">NOW</span>':'')+'</span>'+
+      '<span class="s-prog"><span class="track"><span class="fill" data-fill="'+s.id+'" style="width:0"></span></span><span class="pct" data-pct="'+s.id+'">0%</span></span></summary>'+
+      '<div class="s-body"><div class="s-links">'+links+solve+'</div><div class="cols">'+items+'</div></div>';
+    host.appendChild(d);
+  });
+
+  // ---- render aptitude ----
+  document.getElementById('apt-list').innerHTML=APT.map(function(t,i){var id='apt-'+i;return '<div class="chk'+(on(id)?' done':'')+'"><input type="checkbox" data-id="'+id+'" data-group="apt" '+(on(id)?'checked':'')+'><label>'+esc(t)+'</label></div>';}).join('');
+  // ---- render revision ----
+  document.getElementById('rev-list').innerHTML=REV.map(function(t,i){var id='rev-'+i;return '<div class="chk'+(on(id)?' done':'')+'"><input type="checkbox" data-id="'+id+'" data-group="rev" '+(on(id)?'checked':'')+'><label>'+esc(t)+'</label></div>';}).join('');
+  // ---- render PYQ ----
+  document.getElementById('pyq-body').innerHTML=PYQ.map(function(p){
+    var a='pyq-'+p.y.replace(/\s/g,'_')+'-att', r='pyq-'+p.y.replace(/\s/g,'_')+'-rev';
+    var key=p.key?' · <a href="'+p.key+'">Key</a>':'';
+    return '<tr><td class="yr">'+esc(p.y)+'</td>'+
+      '<td><label class="pyq-chk"><input type="checkbox" data-id="'+a+'" data-group="pyq" '+(on(a)?'checked':'')+'>Attempted</label>'+
+      '<label class="pyq-chk"><input type="checkbox" data-id="'+r+'" data-group="pyq" '+(on(r)?'checked':'')+'>Reviewed</label></td>'+
+      '<td class="lnks"><a href="'+p.pdf+'">Paper</a>'+key+'</td>'+
+      '<td class="lnks"><a href="'+p.go+'">Solved</a><a href="'+p.gfg+'">Quiz</a></td></tr>';
+  }).join('');
+
+  // ---- progress computation ----
+  function subjFrac(s){var d=0;for(var i=0;i<s.topics.length;i++)if(on(s.id+'-'+i))d++;return {done:d,total:s.topics.length};}
+  function recompute(){
+    var totLearnW=0, gotLearnW=0, topicsDone=0, topicsTot=0, subjMastered=0, qcov=0, totQ=0;
+    SUBJECTS.forEach(function(s){
+      var f=subjFrac(s); var frac=f.total?f.done/f.total:0;
+      totLearnW+=s.q; gotLearnW+=s.q*frac; topicsDone+=f.done; topicsTot+=f.total;
+      totQ+=s.q; qcov+=s.q*frac;
+      if(frac===1) subjMastered++;
+      var fl=document.querySelector('[data-fill="'+s.id+'"]'); var pc=document.querySelector('[data-pct="'+s.id+'"]');
+      if(fl) fl.style.width=(frac*100)+'%'; if(pc) pc.textContent=Math.round(frac*100)+'%';
+    });
+    // aptitude counts toward learning with weight 15
+    var aDone=0;for(var i=0;i<APT.length;i++)if(on('apt-'+i))aDone++; var aFrac=aDone/APT.length;
+    totLearnW+=15; gotLearnW+=15*aFrac; totQ+=15; qcov+=15*aFrac; topicsDone+=aDone; topicsTot+=APT.length;
+    document.getElementById('fill-apt').style.width=(aFrac*100)+'%'; document.getElementById('pct-apt').textContent=Math.round(aFrac*100)+'%';
+
+    var learn= totLearnW? gotLearnW/totLearnW : 0;
+
+    // PYQ: each paper up to 1 (att .4 + rev .6)
+    var pyqScore=0, papersReviewed=0;
+    PYQ.forEach(function(p){var a='pyq-'+p.y.replace(/\s/g,'_')+'-att', r='pyq-'+p.y.replace(/\s/g,'_')+'-rev';
+      pyqScore+=(on(a)?.4:0)+(on(r)?.6:0); if(on(r))papersReviewed++;});
+    var pyq=pyqScore/PYQ.length;
+
+    // revision
+    var rDone=0;for(var j=0;j<REV.length;j++)if(on('rev-'+j))rDone++; var rev=rDone/REV.length;
+    document.getElementById('fill-rev').style.width=(rev*100)+'%'; document.getElementById('pct-rev').textContent=Math.round(rev*100)+'%';
+
+    var overall=Math.round((0.5*learn+0.3*pyq+0.2*rev)*100);
+
+    document.getElementById('f-learn').style.width=(learn*100)+'%'; document.getElementById('t-learn').textContent=Math.round(learn*100)+'%';
+    document.getElementById('f-pyq').style.width=(pyq*100)+'%'; document.getElementById('t-pyq').textContent=Math.round(pyq*100)+'%';
+    document.getElementById('f-rev').style.width=(rev*100)+'%'; document.getElementById('t-rev').textContent=Math.round(rev*100)+'%';
+    document.getElementById('ringpct').textContent=overall+'%';
+    document.getElementById('ring').style.setProperty('--p',overall);
+    document.getElementById('k-topics').textContent=topicsDone+' / '+topicsTot;
+    document.getElementById('k-papers').textContent=papersReviewed+' / 12';
+    document.getElementById('k-subj').textContent=subjMastered+' / '+SUBJECTS.length;
+    document.getElementById('k-qcov').textContent=Math.round(qcov)+' / '+Math.round(totQ);
+  }
+
+  // ---- events ----
+  document.addEventListener('change',function(e){
+    var el=e.target; if(el.tagName!=='INPUT'||el.type!=='checkbox'||!el.getAttribute('data-id'))return;
+    var id=el.getAttribute('data-id');
+    if(el.checked) state[id]=1; else delete state[id];
+    var chk=el.closest('.chk'); if(chk) chk.classList.toggle('done',el.checked);
+    save(); recompute();
+  });
+
+  document.getElementById('btn-reset').addEventListener('click',function(){
+    if(!confirm('Reset ALL progress? This clears every tick. Export a backup first if unsure.'))return;
+    state={}; save();
+    document.querySelectorAll('input[type=checkbox][data-id]').forEach(function(c){c.checked=false;var k=c.closest('.chk');if(k)k.classList.remove('done');});
+    recompute(); toast('Progress reset');
+  });
+  document.getElementById('btn-export').addEventListener('click',function(){
+    var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='isro_cs_progress_backup.json'; a.click(); toast('Backup downloaded');
+  });
+  document.getElementById('btn-import').addEventListener('click',function(){document.getElementById('file-import').click();});
+  document.getElementById('file-import').addEventListener('change',function(e){
+    var f=e.target.files[0]; if(!f)return; var rd=new FileReader();
+    rd.onload=function(){try{var obj=JSON.parse(rd.result); if(typeof obj!=='object')throw 0; state=obj; save();
+      document.querySelectorAll('input[type=checkbox][data-id]').forEach(function(c){var v=!!state[c.getAttribute('data-id')];c.checked=v;var k=c.closest('.chk');if(k)k.classList.toggle('done',v);});
+      recompute(); toast('Progress imported');}catch(err){alert('Could not read that file.');}};
+    rd.readAsText(f); e.target.value='';
+  });
+  document.getElementById('btn-collapse').addEventListener('click',function(){
+    var any=document.querySelector('details.subj[open]'); document.querySelectorAll('details.subj').forEach(function(d){d.open=!any;});
+    this.textContent=any?'Expand all':'Collapse all';
+  });
+
+  recompute();
+})();
+</script>
